@@ -54,16 +54,22 @@ def task_f(G):
     print("Stable set: " + str(independent_set))
 
 def task_g(G):
-    gr = nx.Graph(G)
+    gr = maximum_connected_component(G)
     max_match = nx.max_weight_matching(gr, maxcardinality=True, weight=0)
     print("Size of maximum matching: " + str(len(max_match)))
     print("Maximum matching: " + str(max_match))
 
 def task_h(G):
-    gr = nx.Graph(G)
+    gr = maximum_connected_component(G)
     min_v_cover = nx.algorithms.approximation.min_weighted_vertex_cover(gr, weight=0)
     print("Number of vertex in minimum cover: " + str(len(min_v_cover)))
     print("Minimum vertex cover of G: " + str(min_v_cover))
+
+def task_i(G):
+    gr = maximum_connected_component(G)
+    min_e_cover = nx.algorithms.min_edge_cover(gr)
+    print("Number of edges in minimum cover: " + str(len(min_e_cover)))
+    print("Minimmum edge cover of G: " + str(min_e_cover))
 
 G = nx.Graph()
 file = open("input.txt")
@@ -84,5 +90,5 @@ G.add_nodes_from(free_nodes)
 #task_f(G) done
 #task_g(G) done
 #task_h(G) done
-
+task_i(G)
 
