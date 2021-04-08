@@ -3,6 +3,7 @@ from networkx.algorithms import approximation
 import matplotlib.pyplot as plt
 
 free_nodes = ["CY", "MT", "IS"]
+color_map = ['b', 'g', 'y', "#9457EB", "#004242", "#FF43A4", "#FA8837", "#05AFB2", "#B22030", "#A0785A"]
 
 def maximum_connected_component(G):
     gr = nx.Graph(G)
@@ -39,13 +40,34 @@ def task_b(G):
     print("𝜅(G) = " + str(nx.node_connectivity(gr)))
     print("𝜆(G) = " + str(nx.edge_connectivity(gr)))
 
-#def task_c(G):
+def task_c(G):
+    #we use less, than 4 colors because of the clique ['BY', 'PL', 'RU', 'UA']
+    res_file = open('vertex_coloring.txt', 'w')
+    gr = maximum_connected_component(G)
+    coloring = nx.greedy_color(gr, strategy="DSATUR")
+    for k, v in coloring.items():
+        string = str(k) + ":" + str(v) + "\n"
+        res_file.write(string)
+    res_file.close()
+
+def task_c_pic(G):
+    gr = maximum_connected_component(G)
+    file = open("vertex_coloring.txt")
+    colors = dict()
+    nodes = (gr.nodes.keys())
+    for line in file.readlines():
+        colors[line.split(":")[0]] = int(line.split(":")[1])
+    nodes_color = list()
+    for i in nodes:
+        nodes_color.append(colors[i])
+    draw_graph(gr, "vertex_coloring.png", node_color=nodes_color)
+
 
 
 def task_e(G):
     gr = maximum_connected_component(G)
     cliques = list(nx.enumerate_all_cliques(gr))
-    print("Maximum connected component: "+str(cliques.pop()))
+    print("Maximum clique: "+str(cliques.pop()))
 
 def task_f(G):
     gr = maximum_connected_component(G)
@@ -84,7 +106,8 @@ G.add_nodes_from(free_nodes)
 
 #draw_graph(G, "planar_pic") done
 #task_b(G) done
-#task_c(G) -
+#task_c(G) done
+#task_c_pic(G) done
 #task_d(G) -
 #task_e(G) done
 #task_f(G) done
