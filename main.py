@@ -90,5 +90,6 @@ G.add_nodes_from(free_nodes)
 #task_f(G) done
 #task_g(G) done
 #task_h(G) done
-task_i(G)
+#task_i(G) done
+
 
