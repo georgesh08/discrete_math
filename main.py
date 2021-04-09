@@ -71,11 +71,18 @@ def task_c_pic(G, filename):
 def task_d(G):
     # max degree in our graph is 9(for example: Germany), so we can't use less, than 9 colors. Lets color edges to prove that 9 is minimum
     gr = maximum_connected_component(G)
+    file = open("edge_coloring.txt")
     edges_colors = list()
-    length = len(list(gr.edges.keys()))
-    for i in range(0, length):
-        edges_colors.append(color_map[i % len(color_map)])
-    draw_graph(gr, "edge_coloring.txt.png", edge_color=edges_colors, node_color="#FF2603")
+    colors = dict()
+    #length = len(list(gr.edges.keys()))
+    #for i in range(0, length):
+        #edges_colors.append(color_map[i % len(color_map)])
+    for line in file.readlines():
+        colors[(line.split(" ")[0], line.split(" ")[1])] = int(line.split(" ")[2])
+    edges = (gr.edges.keys())
+    for i in edges:
+        edges_colors.append(color_map[colors[i]])
+    draw_graph(gr, "edge_coloring.png", edge_color=edges_colors, node_color="#FF2603")
 
 
 
