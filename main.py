@@ -45,7 +45,7 @@ def task_b(G):
 
 
 def task_c(G):
-    # we use less, than 4 colors because of the clique maximum ['BY', 'PL', 'RU', 'UA']
+    # we can't use less, than 4 colors because of the clique maximum ['BY', 'PL', 'RU', 'UA']
     res_file = open('vertex_coloring.txt', 'w')
     gr = maximum_connected_component(G)
     coloring = nx.greedy_color(gr, strategy="DSATUR")
@@ -74,18 +74,12 @@ def task_d(G):
     file = open("edge_coloring.txt")
     edges_colors = list()
     colors = dict()
-    #length = len(list(gr.edges.keys()))
-    #for i in range(0, length):
-        #edges_colors.append(color_map[i % len(color_map)])
     for line in file.readlines():
         colors[(line.split(" ")[0], line.split(" ")[1])] = int(line.split(" ")[2])
     edges = (gr.edges.keys())
     for i in edges:
         edges_colors.append(color_map[colors[i]])
     draw_graph(gr, "edge_coloring.png", edge_color=edges_colors, node_color="#FF2603")
-
-
-
 
 def task_e(G):
     gr = maximum_connected_component(G)
@@ -96,7 +90,7 @@ def task_e(G):
 def task_f(G):
     gr = maximum_connected_component(G)
     independent_set = nx.algorithms.approximation.maximum_independent_set(gr)
-    print("Size of stable set" + str(len(independent_set)))
+    print("Size of stable: " + str(len(independent_set)))
     print("Stable set: " + str(independent_set))
 
 
@@ -118,8 +112,33 @@ def task_i(G):
     gr = maximum_connected_component(G)
     min_e_cover = nx.algorithms.min_edge_cover(gr)
     print("Number of edges in minimum cover: " + str(len(min_e_cover)))
-    print("Minimmum edge cover of G: " + str(min_e_cover))
+    print("Minimum edge cover of G: " + str(min_e_cover))
 
+
+def task_m(G):
+    two_edge_connected_components = list(nx.algorithms.connectivity.bridge_components(G))
+    print("Total components: " + str(len(two_edge_connected_components)))
+    print("Vertex in this components: " + str(two_edge_connected_components))
+
+def find_max_biconnected_component(G):
+    gr = maximum_connected_component(G)
+    bnodes = nx.biconnected_component_edges(gr)
+    return list(bnodes).pop()
+
+def mst(G):
+    gr = maximum_connected_component(G)
+    spantree = nx.minimum_spanning_tree(gr)
+    return spantree
+
+def task_q(spantree):
+    new_labels = dict()
+    i = 0
+    for node in spantree.nodes:
+        new_labels[node] = i
+        i+=1
+    spntr = nx.relabel_nodes(spantree, new_labels)
+    prufer = nx.to_prufer_sequence(spntr)
+    print("Prufer code: " + str(prufer))
 
 G = nx.Graph()
 file = open("input.txt")
@@ -128,7 +147,7 @@ for i in file.readlines():
     struct = i.split(", ")
     struct[2] = int(struct[2])
     edges.append(struct)
-
+file.close()
 G.add_weighted_edges_from(edges)
 G.add_nodes_from(free_nodes)
 
@@ -142,3 +161,8 @@ G.add_nodes_from(free_nodes)
 #task_g(G)
 #task_h(G)
 #task_i(G)
+#task_m(G)
+span_tree = nx.Graph()
+span_tree = mst(G)
+#task_q(span_tree)
+#draw_graph(span_tree, "mst.png")
