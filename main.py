@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 free_nodes = ["CY", "MT", "IS"]
 color_map = ['b', 'g', 'y', "#9457EB", "#004242", "#FF43A4", "#FA8837", "#05AFB2", "#B22030", "#A0785A"]
 
-
 def maximum_connected_component(G):
     gr = nx.Graph(G)
     gr.remove_nodes_from(free_nodes)
@@ -13,6 +12,13 @@ def maximum_connected_component(G):
     gr.remove_nodes_from(smallest)
     return gr
 
+def find_weight(g):
+    weight = 0
+    p = nx.Graph(g)
+    edges = list(p.edges)
+    for edge in edges:
+        weight += p.get_edge_data(edge[0], edge[1], "weight").get("weight")
+    return weight
 
 def draw_graph(G, filename, node_color="#1F78B4", edge_color="000000"):
     plt.subplot(111)
@@ -20,7 +26,6 @@ def draw_graph(G, filename, node_color="#1F78B4", edge_color="000000"):
     nx.draw(G, pos=position, node_color=node_color, edge_color=edge_color, with_labels=True, width=0.7)
     plt.savefig(filename, dpi=1000)
     plt.show()
-
 
 def task_b(G):
     gr = nx.Graph(G)
@@ -67,7 +72,6 @@ def task_c_pic(G, filename):
         nodes_color.append(color_map[colors[i]])
     draw_graph(gr, filename, node_color=nodes_color)
 
-
 def task_d(G):
     # max degree in our graph is 9(for example: Germany), so we can't use less, than 9 colors. Lets color edges to prove that 9 is minimum
     gr = maximum_connected_component(G)
@@ -86,13 +90,11 @@ def task_e(G):
     cliques = list(nx.enumerate_all_cliques(gr))
     print("Maximum clique: " + str(cliques.pop()))
 
-
 def task_f(G):
     gr = maximum_connected_component(G)
     independent_set = nx.algorithms.approximation.maximum_independent_set(gr)
     print("Size of stable: " + str(len(independent_set)))
     print("Stable set: " + str(independent_set))
-
 
 def task_g(G):
     gr = maximum_connected_component(G)
@@ -100,20 +102,17 @@ def task_g(G):
     print("Size of maximum matching: " + str(len(max_match)))
     print("Maximum matching: " + str(max_match))
 
-
 def task_h(G):
     gr = maximum_connected_component(G)
     min_v_cover = nx.algorithms.approximation.min_weighted_vertex_cover(gr, weight=0)
     print("Number of vertex in minimum cover: " + str(len(min_v_cover)))
     print("Minimum vertex cover of G: " + str(min_v_cover))
 
-
 def task_i(G):
     gr = maximum_connected_component(G)
     min_e_cover = nx.algorithms.min_edge_cover(gr)
     print("Number of edges in minimum cover: " + str(len(min_e_cover)))
     print("Minimum edge cover of G: " + str(min_e_cover))
-
 
 def task_m(G):
     two_edge_connected_components = list(nx.algorithms.connectivity.bridge_components(G))
@@ -140,6 +139,30 @@ def task_q(spantree):
     prufer = nx.to_prufer_sequence(spntr)
     print("Prufer code: " + str(prufer))
 
+def task_p(span_tree):
+    num = span_tree.number_of_nodes()
+    component_weights = dict()
+    centroid = list()
+    for node in list(span_tree.nodes):
+        tmp = nx.Graph(span_tree)
+        tmp.remove_node(node)
+        temp_list = [tmp.subgraph(c).copy() for c in nx.connected_components(tmp)]
+        max = -1
+        for sub in temp_list:
+            deleted_edges = list()
+            tmp_max = find_weight(sub)
+            if tmp_max > max:
+                component_weights[node] = tmp_max
+                max = tmp_max
+    min = 1000000
+    for elem in component_weights:
+        if component_weights[elem] < min:
+            min = component_weights[elem]
+    for elem in component_weights:
+        if component_weights[elem] == min:
+            centroid.append(elem)
+    print(centroid)
+
 G = nx.Graph()
 file = open("input.txt")
 edges = list()
@@ -151,18 +174,19 @@ file.close()
 G.add_weighted_edges_from(edges)
 G.add_nodes_from(free_nodes)
 
-#draw_graph(G, "planar_pic")
-#task_b(G)
-#task_c(G)
-#task_c_pic(G, "vertex_coloring")
-#task_d(G)
-#task_e(G)
-#task_f(G)
-#task_g(G)
-#task_h(G)
-#task_i(G)
-#task_m(G)
+draw_graph(G, "planar_pic")
+task_b(G)
+task_c(G)
+task_c_pic(G, "vertex_coloring")
+task_d(G)
+task_e(G)
+task_f(G)
+task_g(G)
+task_h(G)
+task_i(G)
+task_m(G)
 span_tree = nx.Graph()
 span_tree = mst(G)
-#task_q(span_tree)
-#draw_graph(span_tree, "mst.png")
+task_p(span_tree)
+task_q(span_tree)
+draw_graph(span_tree, "mst.png")
